@@ -1,5 +1,7 @@
 package ru.netology.servlet;
 
+
+
 import ru.netology.controller.PostController;
 import ru.netology.repository.PostRepository;
 import ru.netology.service.PostService;
@@ -10,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MainServlet extends HttpServlet {
   private PostController controller;
+  private static final String SERVLET_PATH = "/";
+  private static final String POST_API_POST  = "/api/posts/";   // обычно используется для множества постов
+  private static final String POST_API_POST_D = "/api/posts/\\d+";  //d+ В контексте API это обычно идентификатор (ID) поста
 
   @Override
   public void init() {
@@ -29,7 +34,7 @@ public class MainServlet extends HttpServlet {
           handleGetRequests(path, resp);
           break;
         case "POST":
-          if (path.equals("/api/posts")) {
+          if (path.equals(POST_API_POST)) {
             controller.save(req.getReader(), resp);
           } else {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -49,10 +54,10 @@ public class MainServlet extends HttpServlet {
   }
 
   private void handleGetRequests(String path, HttpServletResponse resp) throws Exception {
-    if (path.equals("/api/posts")) {
+    if (path.equals(POST_API_POST)) {
       controller.all(resp);
-    } else if (path.matches("/api/posts/\\d+")) {
-      final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+    } else if (path.matches(POST_API_POST_D)) {
+      final var id = Long.parseLong(path.substring(path.lastIndexOf(SERVLET_PATH) + 1));
       controller.getById(id, resp);
     } else {
       resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -60,8 +65,8 @@ public class MainServlet extends HttpServlet {
   }
 
   private void handleDeleteRequests(String path, HttpServletResponse resp) throws Exception {
-    if (path.matches("/api/posts/\\d+")) {
-      final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
+    if (path.matches(POST_API_POST_D)) {
+      final var id = Long.parseLong(path.substring(path.lastIndexOf(SERVLET_PATH) + 1));
       controller.removeById(id, resp);
     } else {
       resp.setStatus(HttpServletResponse.SC_NOT_FOUND);

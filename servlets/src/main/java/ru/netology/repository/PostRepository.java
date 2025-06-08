@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PostRepository {
+  private final AtomicLong idGenerator = new AtomicLong(0);
   private final ConcurrentHashMap<Long, Post> posts = new ConcurrentHashMap<>();
 
   public List<Post> all() {
@@ -19,7 +21,10 @@ public class PostRepository {
   }
 
   public Post save(Post post) {
-    return posts.put(post.getId(), post);
+    long newId = idGenerator.incrementAndGet();
+    post.setId(newId);
+    posts.put(newId, post);
+    return post;
   }
 
   public void removeById(long id) {

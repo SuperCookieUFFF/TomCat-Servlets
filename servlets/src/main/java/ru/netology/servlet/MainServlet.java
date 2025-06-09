@@ -17,9 +17,10 @@ public class MainServlet extends HttpServlet {
 
   @Override
   public void init() {
-    ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+    ApplicationContext context = new AnnotationConfigApplicationContext("ru.netology");
     controller = context.getBean(PostController.class);
   }
+
 
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) {
